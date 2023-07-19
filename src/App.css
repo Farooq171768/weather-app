@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+body{
+  background-image: url("./components/background.jpg");
+  background-size: cover;
+  background-position:center;
+}
+
+.container{
+  display: flex;
+}
+
+.div{
+  padding: 10px;
+  margin: 5px;
+  
+}
+b{
+  color: blue;
+}
