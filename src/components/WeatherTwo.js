@@ -11,62 +11,73 @@ export const WeatherTwo = () => {
         setCity(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if (city.trim() !== '') {
-            fetchWeatherData();
+            try {
+                const response = await axios.get(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=dac06a6a08b63e3df3419bfdc2ae5b85`
+                );
+                setWeatherData(response.data);
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                setWeatherData(null);
+            }
         }
     };
 
-    const fetchWeatherData = async () => {
-        try {
-            const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=dac06a6a08b63e3df3419bfdc2ae5b85`);
-            setWeatherData(response.data);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-            setWeatherData(null);
-        }
-    };
     const reset = () => {
-        setWeatherData(null)
-    }
+        setWeatherData(null);
+        setCity('')
+    };
     return (
         <div className='weather-container' id='weather2'>
             <h1>Weather App</h1>
             <form onSubmit={handleSubmit}>
-                <div><input type='text' value={city} onChange={handleChange} placeholder='Enter City' /></div>
-                <div>
-                <button type='submit'>Get weather details</button>
-                <button onClick={reset}>Reset</button>
-                </div>
-                
+                <div className='input-container'>
+                    <input type='text' value={city} onChange={handleChange} placeholder='Enter City' style={{ width: '600px' }}/>
+                </div> 
             </form>
-            {weatherData && (
-                <div className='container'>
-                    <div className='div'>
-                    <i class='fas fa-temperature-high'></i>
-                        <b> Temperature</b>
-                        <p>{weatherData.main.temp} K</p>
+            <div class='button-container'>
+                    <button type='submit' onClick={handleSubmit}>Get weather details</button>
+                    <button type='button' onClick={reset}>Reset</button>
+            </div>
+            {weatherData && weatherData.sys && (
+                <div class='container'>
+                    <div class='div'>
+                        <i class="fas fa-sun"></i>
+                        <b>Sunrise</b>
+                        <p>{new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</p>
                     </div>
-                    <div className='div'>
-                    <i class='fas fa-cloud'></i>
+                    <div class='div'>
+                        <i class='fas fa-temperature-high'></i>
+                        <b> Temperature</b>
+                        <p>{((weatherData.main.temp) - 273).toFixed()} °C</p>
+                    </div>
+                    <div class='div'>
+                        <i class='fas fa-cloud'></i>
                         <b>Weather</b>
                         <p>{weatherData.weather[0].description}</p>
                     </div>
-                    <div className='div'>
-                        <i class='fal fa-humidity'></i>
+                    <div class='div'>
+                        <i class="fa-solid fa-droplet"></i>
                         <b>Humidity</b>
                         <p>{weatherData.main.humidity}%</p>
                     </div>
-                    <div className='div'>
-                    <i class="fa-solid fa-gauge-high"></i>
+                    <div class='div'>
+                        <i class="fa-solid fa-gauge-high"></i>
                         <b>Pressure</b>
                         <p>{weatherData.main.pressure} hPa</p>
                     </div>
-                    <div className='div'>
-                    <i class="fa-solid fa-wind"></i>
+                    <div class='div'>
+                        <i class="fa-solid fa-wind"></i>
                         <b>Wind Speed</b>
                         <p>{weatherData.wind.speed} m/s</p>
+                    </div>
+                    <div class='div'>
+                        <i class="fas fa-sun"></i>
+                        <b>Sunset</b>
+                        <p>{new Date(weatherData.sys.sunset * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} </p>
                     </div>
                 </div>
             )}
